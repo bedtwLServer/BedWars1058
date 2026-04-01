@@ -52,6 +52,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 @SuppressWarnings({"CallToPrintStackTrace", "unused"})
@@ -424,7 +425,7 @@ public class SlimeAdapter extends RestoreAdapter {
 
                 if (tag.isPresent()) {
                     Optional<CompoundTag> dataTag = tag.get().getAsCompoundTag("Chunk");
-                    Optional<Integer> version = dataTag.flatMap(tagMap -> tagMap.getIntValue("DataVersion"));
+                    Optional<Integer> version = dataTag.flatMap((Function<? super CompoundTag, ? extends Optional<? extends Integer>>) tagMap -> tagMap.getIntValue("DataVersion"));
                     if (version.isPresent()) {
                         dataVersion = version;
                         Bukkit.getLogger().info(

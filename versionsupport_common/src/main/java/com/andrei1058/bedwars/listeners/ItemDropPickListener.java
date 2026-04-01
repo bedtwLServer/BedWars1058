@@ -32,10 +32,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDropItemEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -58,32 +55,6 @@ public class ItemDropPickListener {
         @EventHandler
         public void onDrop(PlayerPickupItemEvent e){
             if (managePickup(e.getItem(), e.getPlayer())) e.setCancelled(true);
-        }
-    }
-
-    // 1.13 or newer
-    public static class EntityDrop implements Listener {
-        @EventHandler
-        public void onDrop(EntityDropItemEvent e){
-            if (manageDrop(e.getEntity(), e.getItemDrop())) e.setCancelled(true);
-        }
-    }
-
-    // 1.12 or newer
-    public static class EntityPickup implements Listener {
-        @EventHandler
-        public void onPickup(EntityPickupItemEvent e){
-            if (managePickup(e.getItem(), e.getEntity())) e.setCancelled(true);
-        }
-    }
-
-    // 1.9 or newer
-    public static class ArrowCollect implements Listener {
-        @EventHandler
-        public void onArrowPick(PlayerPickupArrowEvent e){
-            if (api.getArenaUtil().isSpectating(e.getPlayer())) {
-                e.setCancelled(true);
-            }
         }
     }
 

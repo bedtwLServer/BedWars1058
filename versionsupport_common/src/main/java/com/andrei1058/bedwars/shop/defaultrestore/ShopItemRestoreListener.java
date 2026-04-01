@@ -31,8 +31,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDropItemEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -54,26 +52,9 @@ public class ShopItemRestoreListener {
 
     // 1.11 or older
     public static class PlayerPickup implements Listener {
-        @SuppressWarnings("deprecation")
         @EventHandler
         public void onDrop(PlayerPickupItemEvent e) {
             if (managePickup(e.getItem(), e.getPlayer())) e.setCancelled(true);
-        }
-    }
-
-    // 1.12 or newer
-    public static class EntityDrop implements Listener {
-        @EventHandler
-        public void onDrop(EntityDropItemEvent e) {
-            if (manageDrop(e.getEntity(), e.getItemDrop())) e.setCancelled(true);
-        }
-    }
-
-    // 1.12 or newer
-    public static class EntityPickup implements Listener {
-        @EventHandler
-        public void onDrop(EntityPickupItemEvent e) {
-            if (managePickup(e.getItem(), e.getEntity())) e.setCancelled(true);
         }
     }
 
