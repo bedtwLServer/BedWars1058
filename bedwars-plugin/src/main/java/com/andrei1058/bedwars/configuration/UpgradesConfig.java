@@ -74,12 +74,13 @@ public class UpgradesConfig extends ConfigManager {
 
             yml.addDefault("upgrade-miner.tier-1.currency", "diamond");
             yml.addDefault("upgrade-miner.tier-1.cost", 2);
-            addDefaultDisplayItem("upgrade-miner.tier-1", getForCurrentVersion("GOLD_PICKAXE", "GOLD_PICKAXE", "GOLDEN_PICKAXE"), 0, 1, false);
+            addDefaultDisplayItem("upgrade-miner.tier-1", "GOLD_PICKAXE", 0, 1, false);
             yml.addDefault("upgrade-miner.tier-1.receive", Collections.singletonList("player-effect: FAST_DIGGING,0,0,team"));
 
             yml.addDefault("upgrade-miner.tier-2.currency", "diamond");
             yml.addDefault("upgrade-miner.tier-2.cost", 4);
-            addDefaultDisplayItem("upgrade-miner.tier-2", getForCurrentVersion("GOLD_PICKAXE", "GOLD_PICKAXE", "GOLDEN_PICKAXE"), 0, 2, false);            yml.addDefault("upgrade-miner.tier-2.receive", Collections.singletonList("player-effect: FAST_DIGGING,1,0,team"));
+            addDefaultDisplayItem("upgrade-miner.tier-2", "GOLD_PICKAXE", 0, 2, false);
+            yml.addDefault("upgrade-miner.tier-2.receive", Collections.singletonList("player-effect: FAST_DIGGING,1,0,team"));
 
             yml.addDefault("upgrade-forge.tier-1.currency", "diamond");
             yml.addDefault("upgrade-forge.tier-1.cost", 2);
@@ -118,18 +119,14 @@ public class UpgradesConfig extends ConfigManager {
                     "base-trap-3,12", "base-trap-4,13", "separator-back,31"));
 
             yml.addDefault("separator-glass.on-click", "");
-            addDefaultDisplayItem("separator-glass", getForCurrentVersion("STAINED_GLASS_PANE", "STAINED_GLASS_PANE",
-                    "GRAY_STAINED_GLASS_PANE"), 7, 1, false);
+            addDefaultDisplayItem("separator-glass", "STAINED_GLASS_PANE", 7, 1, false);
 
             yml.addDefault("trap-slot-first.trap", 1);
-            addDefaultDisplayItem("trap-slot-first", getForCurrentVersion("STAINED_GLASS", "STAINED_GLASS",
-                    "GRAY_STAINED_GLASS"), 8, 1, false);
+            addDefaultDisplayItem("trap-slot-first", "STAINED_GLASS", 8, 1, false);
             yml.addDefault("trap-slot-second.trap", 2);
-            addDefaultDisplayItem("trap-slot-second", getForCurrentVersion("STAINED_GLASS", "STAINED_GLASS",
-                    "GRAY_STAINED_GLASS"), 8, 2, false);
+            addDefaultDisplayItem("trap-slot-second", "STAINED_GLASS", 8, 2, false);
             yml.addDefault("trap-slot-third.trap", 3);
-            addDefaultDisplayItem("trap-slot-third", getForCurrentVersion("STAINED_GLASS", "STAINED_GLASS",
-                    "GRAY_STAINED_GLASS"), 8, 3, false);
+            addDefaultDisplayItem("trap-slot-third", "STAINED_GLASS", 8, 3, false);
 
             addDefaultDisplayItem("base-trap-1", "TRIPWIRE_HOOK", 0, 1, false);
             yml.addDefault("base-trap-1.receive", Arrays.asList("player-effect: BLINDNESS,1,5,enemy", "player-effect: SLOW,1,5,enemy"));
@@ -137,7 +134,7 @@ public class UpgradesConfig extends ConfigManager {
             addDefaultDisplayItem("base-trap-2", "FEATHER", 0, 1, false);
             yml.addDefault("base-trap-2.receive", Collections.singletonList("player-effect: SPEED,1,15,base"));
 
-            addDefaultDisplayItem("base-trap-3", getForCurrentVersion("REDSTONE_TORCH_ON", "REDSTONE_TORCH", "REDSTONE_TORCH"), 0, 1, false);
+            addDefaultDisplayItem("base-trap-3", "REDSTONE_TORCH_ON", 0, 1, false);
             yml.addDefault("base-trap-3.custom-announce", true);
             yml.addDefault("base-trap-3.receive", Collections.singletonList("remove-effect: INVISIBILITY,enemy"));
 

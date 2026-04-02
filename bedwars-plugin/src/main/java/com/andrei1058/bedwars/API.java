@@ -380,7 +380,7 @@ public class API implements com.andrei1058.bedwars.api.BedWars {
 
     @Override
     public String getForCurrentVersion(String v18, String v12, String v13) {
-        return BedWars.getForCurrentVersion(v18, v12, v13);
+        return BedWars.getForCurrentVersion(v18);
     }
 
     @Override

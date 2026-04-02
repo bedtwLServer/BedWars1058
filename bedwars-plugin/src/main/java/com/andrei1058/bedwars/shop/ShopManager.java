@@ -52,30 +52,30 @@ public class ShopManager extends ConfigManager {
         getYml().options().header("Shop with quick buy and tiers");
 
         //quick buy
-        getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_BUTTON_MATERIAL, BedWars.getForCurrentVersion("NETHER_STAR", "NETHER_STAR", "NETHER_STAR"));
+        getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_BUTTON_MATERIAL, "NETHER_STAR");
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_BUTTON_AMOUNT, 1);
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_BUTTON_DATA, 0);
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_BUTTON_ENCHANTED, false);
 
-        getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_MATERIAL, BedWars.getForCurrentVersion("STAINED_GLASS_PANE", "STAINED_GLASS_PANE", "RED_STAINED_GLASS_PANE"));
+        getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_MATERIAL, "STAINED_GLASS_PANE");
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_AMOUNT, 1);
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_DATA, 4);
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_ENCHANTED, false);
 
         //separator
-        getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_REGULAR_MATERIAL, BedWars.getForCurrentVersion("STAINED_GLASS_PANE", "STAINED_GLASS_PANE", "GRAY_STAINED_GLASS_PANE"));
+        getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_REGULAR_MATERIAL, "STAINED_GLASS_PANE");
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_REGULAR_AMOUNT, 1);
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_REGULAR_DATA, 7);
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_REGULAR_ENCHANTED, false);
 
-        getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_SELECTED_MATERIAL, BedWars.getForCurrentVersion("STAINED_GLASS_PANE", "STAINED_GLASS_PANE", "GREEN_STAINED_GLASS_PANE"));
+        getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_SELECTED_MATERIAL, "STAINED_GLASS_PANE");
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_SELECTED_AMOUNT, 1);
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_SELECTED_DATA, 13);
         getYml().addDefault(ConfigPath.SHOP_SETTINGS_SEPARATOR_SELECTED_ENCHANTED, false);
 
         //specials
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_ENABLE, true);
-        getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_MATERIAL, BedWars.getForCurrentVersion("SNOW_BALL", "SNOW_BALL", "SNOWBALL"));
+        getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_MATERIAL, "SNOW_BALL");
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_DATA, 0);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_HEALTH, 8.0);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_DAMAGE, 4.0);
@@ -83,14 +83,14 @@ public class ShopManager extends ConfigManager {
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_DESPAWN, 15);
 
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_ENABLE, true);
-        getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_MATERIAL, BedWars.getForCurrentVersion("MONSTER_EGG", "MONSTER_EGG", "HORSE_SPAWN_EGG"));
+        getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_MATERIAL, "MONSTER_EGG");
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_DATA, 0);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_HEALTH, 100.0);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_DESPAWN, 240);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_SPEED, 0.25);
 
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_TOWER_ENABLE, true);
-        getYml().addDefault(ConfigPath.SHOP_SPECIAL_TOWER_MATERIAL, BedWars.getForCurrentVersion("CHEST", "CHEST", "CHEST"));
+        getYml().addDefault(ConfigPath.SHOP_SPECIAL_TOWER_MATERIAL, "CHEST");
 
         if (isFirstTime()) {
             //quick buy defaults
@@ -127,232 +127,232 @@ public class ShopManager extends ConfigManager {
         //so the user can remove categories or add new ones
         if (isFirstTime()) {
             //BLOCKS CATEGORY
-            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, 1, BedWars.getForCurrentVersion("STAINED_CLAY", "STAINED_CLAY", "ORANGE_TERRACOTTA"), 1, 1, false);
+            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, 1, "STAINED_CLAY", 1, 1, false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "wool", 19, "tier1",
-                    BedWars.getForCurrentVersion("WOOL", "WOOL", "WHITE_WOOL"), 0, 16, false, 4, "iron", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "wool", "tier1", "wool", BedWars.getForCurrentVersion("WOOL", "WOOL", "WHITE_WOOL"),
+                    "WOOL", 0, 16, false, 4, "iron", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "wool", "tier1", "wool", "WOOL",
                     0, 16, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "clay", 20, "tier1",
-                    BedWars.getForCurrentVersion("STAINED_CLAY", "STAINED_CLAY", "ORANGE_TERRACOTTA"), 1, 16, false, 12, "iron", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "clay", "tier1", "clay", BedWars.getForCurrentVersion("STAINED_CLAY", "STAINED_CLAY", "ORANGE_TERRACOTTA"),
+                    "STAINED_CLAY", 1, 16, false, 12, "iron", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "clay", "tier1", "clay", "STAINED_CLAY",
                     1, 16, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "glass", 21, "tier1",
-                    BedWars.getForCurrentVersion("GLASS", "GLASS", "GLASS"), 0, 4, false, 12, "iron", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "glass", "tier1", "glass", BedWars.getForCurrentVersion("GLASS", "GLASS", "GLASS"),
+                    "GLASS", 0, 4, false, 12, "iron", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "glass", "tier1", "glass", "GLASS",
                     0, 4, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "stone", 22, "tier1",
-                    BedWars.getForCurrentVersion("ENDER_STONE", "ENDER_STONE", "END_STONE"), 0, 16, false, 24, "iron", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "stone", "tier1", "stone", BedWars.getForCurrentVersion("ENDER_STONE", "ENDER_STONE", "END_STONE"),
+                    "ENDER_STONE", 0, 16, false, 24, "iron", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "stone", "tier1", "stone", "ENDER_STONE",
                     0, 16, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "ladder", 23, "tier1",
-                    BedWars.getForCurrentVersion("LADDER", "LADDER", "LADDER"), 0, 16, false, 4, "iron", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "ladder", "tier1", "ladder", BedWars.getForCurrentVersion("LADDER", "LADDER", "LADDER"),
+                    "LADDER", 0, 16, false, 4, "iron", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "ladder", "tier1", "ladder", "LADDER",
                     0, 16, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "wood", 24, "tier1",
-                    BedWars.getForCurrentVersion("WOOD", "WOOD", "OAK_WOOD"), 0, 16, false, 4, "gold", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "wood", "tier1", "wood", BedWars.getForCurrentVersion("WOOD", "WOOD", "OAK_WOOD"),
+                    "WOOD", 0, 16, false, 4, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "wood", "tier1", "wood", "WOOD",
                     0, 16, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "obsidian", 25, "tier1",
-                    BedWars.getForCurrentVersion("OBSIDIAN", "OBSIDIAN", "OBSIDIAN"), 0, 4, false, 4, "emerald", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "obsidian", "tier1", "obsidian", BedWars.getForCurrentVersion("OBSIDIAN", "OBSIDIAN", "OBSIDIAN"),
+                    "OBSIDIAN", 0, 4, false, 4, "emerald", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_BLOCKS, "obsidian", "tier1", "obsidian", "OBSIDIAN",
                     0, 4, "", "", "", false);
             //
 
             //MELEE CATEGORY
-            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_MELEE, 2, BedWars.getForCurrentVersion("GOLD_SWORD", "GOLD_SWORD", "GOLDEN_SWORD"), 0, 1, false);
+            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_MELEE, 2, "GOLD_SWORD", 0, 1, false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "stone-sword", 19, "tier1",
-                    BedWars.getForCurrentVersion("STONE_SWORD", "STONE_SWORD", "STONE_SWORD"), 0, 1, false, 10, "iron", false, false, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "stone-sword", "tier1", "sword", BedWars.getForCurrentVersion("STONE_SWORD", "STONE_SWORD", "STONE_SWORD"),
+                    "STONE_SWORD", 0, 1, false, 10, "iron", false, false, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "stone-sword", "tier1", "sword", "STONE_SWORD",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "iron-sword", 20, "tier1",
-                    BedWars.getForCurrentVersion("IRON_SWORD", "IRON_SWORD", "IRON_SWORD"), 0, 1, false, 7, "gold", false, false, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "iron-sword", "tier1", "sword", BedWars.getForCurrentVersion("IRON_SWORD", "IRON_SWORD", "IRON_SWORD"),
+                    "IRON_SWORD", 0, 1, false, 7, "gold", false, false, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "iron-sword", "tier1", "sword", "IRON_SWORD",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "diamond-sword", 21, "tier1",
-                    BedWars.getForCurrentVersion("DIAMOND_SWORD", "DIAMOND_SWORD", "DIAMOND_SWORD"), 0, 1, false, 4, "emerald", false, false, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "diamond-sword", "tier1", "sword", BedWars.getForCurrentVersion("DIAMOND_SWORD", "DIAMOND_SWORD", "DIAMOND_SWORD"),
+                    "DIAMOND_SWORD", 0, 1, false, 4, "emerald", false, false, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "diamond-sword", "tier1", "sword", "DIAMOND_SWORD",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "stick", 22, "tier1",
-                    BedWars.getForCurrentVersion("STICK", "STICK", "STICK"), 0, 1, true, 10, "gold", false, false, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "stick", "tier1", "stick", BedWars.getForCurrentVersion("STICK", "STICK", "STICK"),
+                    "STICK", 0, 1, true, 10, "gold", false, false, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_MELEE, "stick", "tier1", "stick", "STICK",
                     0, 1, "KNOCKBACK 1", "", "", false);
 
             //ARMOR CATEGORY
-            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, 3, BedWars.getForCurrentVersion("CHAINMAIL_BOOTS", "CHAINMAIL_BOOTS", "CHAINMAIL_BOOTS"), 0, 1, false);
+            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, 3, "CHAINMAIL_BOOTS", 0, 1, false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "chainmail", 19, "tier1",
-                    BedWars.getForCurrentVersion("CHAINMAIL_BOOTS", "CHAINMAIL_BOOTS", "CHAINMAIL_BOOTS"), 0, 1, false, 40, "iron", true, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "chainmail", "tier1", "boots", BedWars.getForCurrentVersion("CHAINMAIL_BOOTS", "CHAINMAIL_BOOTS", "CHAINMAIL_BOOTS"),
+                    "CHAINMAIL_BOOTS", 0, 1, false, 40, "iron", true, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "chainmail", "tier1", "boots", "CHAINMAIL_BOOTS",
                     0, 1, "", "", "", true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "chainmail", "tier1", "leggings", BedWars.getForCurrentVersion("CHAINMAIL_LEGGINGS", "CHAINMAIL_LEGGINGS", "CHAINMAIL_LEGGINGS"),
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "chainmail", "tier1", "leggings", "CHAINMAIL_LEGGINGS",
                     0, 1, "", "", "", true);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "iron-armor", 20, "tier1",
-                    BedWars.getForCurrentVersion("IRON_BOOTS", "IRON_BOOTS", "IRON_BOOTS"), 0, 1, false, 12, "gold", true, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "iron-armor", "tier1", "boots", BedWars.getForCurrentVersion("IRON_BOOTS", "IRON_BOOTS", "IRON_BOOTS"),
+                    "IRON_BOOTS", 0, 1, false, 12, "gold", true, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "iron-armor", "tier1", "boots", "IRON_BOOTS",
                     0, 1, "", "", "", true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "iron-armor", "tier1", "leggings", BedWars.getForCurrentVersion("IRON_LEGGINGS", "IRON_LEGGINGS", "IRON_LEGGINGS"),
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "iron-armor", "tier1", "leggings", "IRON_LEGGINGS",
                     0, 1, "", "", "", true);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "diamond-armor", 21, "tier1",
-                    BedWars.getForCurrentVersion("DIAMOND_BOOTS", "DIAMOND_BOOTS", "DIAMOND_BOOTS"), 0, 1, false, 6, "emerald", true, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "diamond-armor", "tier1", "boots", BedWars.getForCurrentVersion("DIAMOND_BOOTS", "DIAMOND_BOOTS", "DIAMOND_BOOTS"),
+                    "DIAMOND_BOOTS", 0, 1, false, 6, "emerald", true, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "diamond-armor", "tier1", "boots", "DIAMOND_BOOTS",
                     0, 1, "", "", "", true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "diamond-armor", "tier1", "leggings", BedWars.getForCurrentVersion("DIAMOND_LEGGINGS", "DIAMOND_LEGGINGS", "DIAMOND_LEGGINGS"),
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_ARMOR, "diamond-armor", "tier1", "leggings", "DIAMOND_LEGGINGS",
                     0, 1, "", "", "", true);
 
             //TOOLS CATEGORY
-            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, 4, BedWars.getForCurrentVersion("STONE_PICKAXE", "STONE_PICKAXE", "STONE_PICKAXE"), 0, 1, false);
+            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, 4, "STONE_PICKAXE", 0, 1, false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "shears", 19, "tier1",
-                    BedWars.getForCurrentVersion("SHEARS", "SHEARS", "SHEARS"), 0, 1, false, 20, "iron", true, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "shears", "tier1", "shears", BedWars.getForCurrentVersion("SHEARS", "SHEARS", "SHEARS"),
+                    "SHEARS", 0, 1, false, 20, "iron", true, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "shears", "tier1", "shears", "SHEARS",
                     0, 1, "", "", "", false);
 
             //pickaxe
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", 20, "tier1",
-                    BedWars.getForCurrentVersion("WOOD_PICKAXE", "WOOD_PICKAXE", "WOODEN_PICKAXE"), 0, 1, false, 10, "iron", true, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", "tier1", "wooden-pickaxe", BedWars.getForCurrentVersion("WOOD_PICKAXE", "WOOD_PICKAXE", "WOODEN_PICKAXE"),
+                    "WOOD_PICKAXE", 0, 1, false, 10, "iron", true, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", "tier1", "wooden-pickaxe", "WOOD_PICKAXE",
                     0, 1, "", "", "", false);
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", 20, "tier2",
-                    BedWars.getForCurrentVersion("IRON_PICKAXE", "IRON_PICKAXE", "IRON_PICKAXE"), 0, 1, true, 10, "iron", true, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", "tier2", "iron-pickaxe", BedWars.getForCurrentVersion("IRON_PICKAXE", "IRON_PICKAXE", "IRON_PICKAXE"),
+                    "IRON_PICKAXE", 0, 1, true, 10, "iron", true, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", "tier2", "iron-pickaxe", "IRON_PICKAXE",
                     0, 1, "DIG_SPEED 2", "", "", false);
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", 20, "tier3",
-                    BedWars.getForCurrentVersion("GOLD_PICKAXE", "GOLD_PICKAXE", "GOLDEN_PICKAXE"), 0, 1, true, 3, "gold", true, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", "tier3", "gold-pickaxe", BedWars.getForCurrentVersion("GOLD_PICKAXE", "GOLD_PICKAXE", "GOLDEN_PICKAXE"),
+                    "GOLD_PICKAXE", 0, 1, true, 3, "gold", true, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", "tier3", "gold-pickaxe", "GOLD_PICKAXE",
                     0, 1, "DIG_SPEED 3,DAMAGE_ALL 2", "", "", false);
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", 20, "tier4",
-                    BedWars.getForCurrentVersion("DIAMOND_PICKAXE", "DIAMOND_PICKAXE", "DIAMOND_PICKAXE"), 0, 1, true, 6, "gold", true, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", "tier4", "diamond-pickaxe", BedWars.getForCurrentVersion("DIAMOND_PICKAXE", "DIAMOND_PICKAXE", "DIAMOND_PICKAXE"),
+                    "DIAMOND_PICKAXE", 0, 1, true, 6, "gold", true, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "pickaxe", "tier4", "diamond-pickaxe", "DIAMOND_PICKAXE",
                     0, 1, "DIG_SPEED 3", "", "", false);
 
             //axe
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", 21, "tier1",
-                    BedWars.getForCurrentVersion("WOOD_AXE", "WOOD_AXE", "WOODEN_AXE"), 0, 1, false, 10, "iron", true, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", "tier1", "wooden-axe", BedWars.getForCurrentVersion("WOOD_AXE", "WOOD_AXE", "WOODEN_AXE"),
+                    "WOOD_AXE", 0, 1, false, 10, "iron", true, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", "tier1", "wooden-axe", "WOOD_AXE",
                     0, 1, "DIG_SPEED 1", "", "", false);
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", 21, "tier2",
-                    BedWars.getForCurrentVersion("IRON_AXE", "IRON_AXE", "IRON_AXE"), 0, 1, true, 10, "iron", true, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", "tier2", "iron-axe", BedWars.getForCurrentVersion("IRON_AXE", "IRON_AXE", "IRON_AXE"),
+                    "IRON_AXE", 0, 1, true, 10, "iron", true, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", "tier2", "iron-axe", "IRON_AXE",
                     0, 1, "DIG_SPEED 1", "", "", false);
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", 21, "tier3",
-                    BedWars.getForCurrentVersion("GOLD_AXE", "GOLD_AXE", "GOLDEN_AXE"), 0, 1, true, 3, "gold", true, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", "tier3", "gold-axe", BedWars.getForCurrentVersion("GOLD_AXE", "GOLD_AXE", "GOLDEN_AXE"),
+                    "GOLD_AXE", 0, 1, true, 3, "gold", true, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", "tier3", "gold-axe", "GOLD_AXE",
                     0, 1, "DIG_SPEED 2", "", "", false);
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", 21, "tier4",
-                    BedWars.getForCurrentVersion("DIAMOND_AXE", "DIAMOND_AXE", "DIAMOND_AXE"), 0, 1, true, 6, "gold", true, true);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", "tier4", "diamond-axe", BedWars.getForCurrentVersion("DIAMOND_AXE", "DIAMOND_AXE", "DIAMOND_AXE"),
+                    "DIAMOND_AXE", 0, 1, true, 6, "gold", true, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_TOOLS, "axe", "tier4", "diamond-axe", "DIAMOND_AXE",
                     0, 1, "DIG_SPEED 3", "", "", false);
 
             //RANGED CATEGORY
-            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_RANGED, 5, BedWars.getForCurrentVersion("BOW", "BOW", "BOW"), 0, 1, false);
+            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_RANGED, 5, "BOW", 0, 1, false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "arrow", 19, "tier1",
-                    BedWars.getForCurrentVersion("ARROW", "ARROW", "ARROW"), 0, 8, false, 2, "gold", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "arrow", "tier1", "arrows", BedWars.getForCurrentVersion("ARROW", "ARROW", "ARROW"),
+                    "ARROW", 0, 8, false, 2, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "arrow", "tier1", "arrows", "ARROW",
                     0, 8, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "bow1", 20, "tier1",
-                    BedWars.getForCurrentVersion("BOW", "BOW", "BOW"), 0, 1, false, 12, "gold", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "bow1", "tier1", "bow", BedWars.getForCurrentVersion("BOW", "BOW", "BOW"),
+                    "BOW", 0, 1, false, 12, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "bow1", "tier1", "bow", "BOW",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "bow2", 21, "tier1",
-                    BedWars.getForCurrentVersion("BOW", "BOW", "BOW"), 0, 1, true, 24, "gold", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "bow2", "tier1", "bow", BedWars.getForCurrentVersion("BOW", "BOW", "BOW"),
+                    "BOW", 0, 1, true, 24, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "bow2", "tier1", "bow", "BOW",
                     0, 1, "ARROW_DAMAGE 1", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "bow3", 22, "tier1",
-                    BedWars.getForCurrentVersion("BOW", "BOW", "BOW"), 0, 1, true, 6, "emerald", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "bow3", "tier1", "bow", BedWars.getForCurrentVersion("BOW", "BOW", "BOW"),
+                    "BOW", 0, 1, true, 6, "emerald", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_RANGED, "bow3", "tier1", "bow", "BOW",
                     0, 1, "ARROW_DAMAGE 1,ARROW_KNOCKBACK 1", "", "", false);
 
             //POTIONS CATEGORY
-            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, 6, BedWars.getForCurrentVersion("BREWING_STAND_ITEM", "BREWING_STAND_ITEM", "BREWING_STAND"), 0, 1, false);
+            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, 6, "BREWING_STAND_ITEM", 0, 1, false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "jump-potion", 20, "tier1",
-                    BedWars.getForCurrentVersion("POTION", "POTION", "POTION"), 0, 1, false, 1, "emerald", false, false);
-            addBuyPotion(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "jump-potion", "tier1", "jump", BedWars.getForCurrentVersion("POTION", "POTION", "POTION"),
+                    "POTION", 0, 1, false, 1, "emerald", false, false);
+            addBuyPotion(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "jump-potion", "tier1", "jump", "POTION",
                     0, 1, "", "JUMP 45 5", "Jump Potion");
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "speed-potion", 19, "tier1",
-                    BedWars.getForCurrentVersion("POTION", "POTION", "POTION"), 0, 1, false, 1, "emerald", false, false);
-            addBuyPotion(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "speed-potion", "tier1", "speed", BedWars.getForCurrentVersion("POTION", "POTION", "POTION"),
+                    "POTION", 0, 1, false, 1, "emerald", false, false);
+            addBuyPotion(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "speed-potion", "tier1", "speed", "POTION",
                     0, 1, "", "SPEED 45 2", "Speed Potion");
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "invisibility", 21, "tier1",
-                    BedWars.getForCurrentVersion("POTION", "POTION", "POTION"), 0, 1, false, 2, "emerald", false, false);
-            addBuyPotion(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "invisibility", "tier1", "invisibility", BedWars.getForCurrentVersion("POTION", "POTION", "POTION"),
+                    "POTION", 0, 1, false, 2, "emerald", false, false);
+            addBuyPotion(ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "invisibility", "tier1", "invisibility", "POTION",
                     0, 1, "", "INVISIBILITY 30 1", "Invisibility Potion");
 
             //UTILITY CATEGORY
-            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, 7, BedWars.getForCurrentVersion("TNT", "TNT", "TNT"), 0, 1, false);
+            addDefaultShopCategory(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, 7, "TNT", 0, 1, false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "golden-apple", 19, "tier1",
-                    BedWars.getForCurrentVersion("GOLDEN_APPLE", "GOLDEN_APPLE", "GOLDEN_APPLE"), 0, 1, false, 3, "gold", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "golden-apple", "tier1", "apple", BedWars.getForCurrentVersion("GOLDEN_APPLE", "GOLDEN_APPLE", "GOLDEN_APPLE"),
+                    "GOLDEN_APPLE", 0, 1, false, 3, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "golden-apple", "tier1", "apple", "GOLDEN_APPLE",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "bedbug", 20, "tier1",
-                    BedWars.getForCurrentVersion("SNOW_BALL", "SNOW_BALL", "SNOWBALL"), 0, 1, false, 40, "iron", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "bedbug", "tier1", "bedbug", BedWars.getForCurrentVersion("SNOW_BALL", "SNOW_BALL", "SNOWBALL"),
+                    "SNOW_BALL", 0, 1, false, 40, "iron", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "bedbug", "tier1", "bedbug", "SNOW_BALL",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "dream-defender", 21, "tier1",
-                    BedWars.getForCurrentVersion("MONSTER_EGG", "MONSTER_EGG", "HORSE_SPAWN_EGG"), 0, 1, false, 120, "iron", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "dream-defender", "tier1", "defender", BedWars.getForCurrentVersion("MONSTER_EGG", "MONSTER_EGG", "HORSE_SPAWN_EGG"),
+                    "MONSTER_EGG", 0, 1, false, 120, "iron", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "dream-defender", "tier1", "defender", "MONSTER_EGG",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "fireball", 22, "tier1",
-                    BedWars.getForCurrentVersion("FIREBALL", "FIREBALL", "FIRE_CHARGE"), 0, 1, false, 40, "iron", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "fireball", "tier1", "fireball", BedWars.getForCurrentVersion("FIREBALL", "FIREBALL", "FIRE_CHARGE"),
+                    "FIREBALL", 0, 1, false, 40, "iron", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "fireball", "tier1", "fireball", "FIREBALL",
                     0, 1, "", "", "Fireball", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "tnt", 23, "tier1",
-                    BedWars.getForCurrentVersion("TNT", "TNT", "TNT"), 0, 1, false, 4, "gold", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "tnt", "tier1", "tnt", BedWars.getForCurrentVersion("TNT", "TNT", "TNT"),
+                    "TNT", 0, 1, false, 4, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "tnt", "tier1", "tnt", "TNT",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "ender-pearl", 24, "tier1",
-                    BedWars.getForCurrentVersion("ENDER_PEARL", "ENDER_PEARL", "ENDER_PEARL"), 0, 1, false, 4, "emerald", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "ender-pearl", "tier1", "ender-pearl", BedWars.getForCurrentVersion("ENDER_PEARL", "ENDER_PEARL", "ENDER_PEARL"),
+                    "ENDER_PEARL", 0, 1, false, 4, "emerald", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "ender-pearl", "tier1", "ender-pearl", "ENDER_PEARL",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "water-bucket", 25, "tier1",
-                    BedWars.getForCurrentVersion("WATER_BUCKET", "WATER_BUCKET", "WATER_BUCKET"), 0, 1, false, 4, "gold", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "water-bucket", "tier1", "water-bucket", BedWars.getForCurrentVersion("WATER_BUCKET", "WATER_BUCKET", "WATER_BUCKET"),
+                    "WATER_BUCKET", 0, 1, false, 4, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "water-bucket", "tier1", "water-bucket", "WATER_BUCKET",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "bridge-egg", 28, "tier1",
-                    BedWars.getForCurrentVersion("EGG", "EGG", "EGG"), 0, 1, false, 3, "emerald", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "bridge-egg", "tier1", "egg", BedWars.getForCurrentVersion("EGG", "EGG", "EGG"),
+                    "EGG", 0, 1, false, 3, "emerald", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "bridge-egg", "tier1", "egg", "EGG",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "magic-milk", 29, "tier1",
-                    BedWars.getForCurrentVersion("MILK_BUCKET", "MILK_BUCKET", "MILK_BUCKET"), 0, 1, false, 4, "gold", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "magic-milk", "tier1", "milk", BedWars.getForCurrentVersion("MILK_BUCKET", "MILK_BUCKET", "MILK_BUCKET"),
+                    "MILK_BUCKET", 0, 1, false, 4, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "magic-milk", "tier1", "milk", "MILK_BUCKET",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "sponge", 30, "tier1",
-                    BedWars.getForCurrentVersion("SPONGE", "SPONGE", "SPONGE"), 0, 1, false, 3, "gold", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "sponge", "tier1", "sponge", BedWars.getForCurrentVersion("SPONGE", "SPONGE", "SPONGE"),
+                    "SPONGE", 0, 1, false, 3, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "sponge", "tier1", "sponge", "SPONGE",
                     0, 1, "", "", "", false);
 
             adCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "tower", 31, "tier1",
-                    BedWars.getForCurrentVersion("CHEST", "CHEST", "CHEST"), 0, 1, false, 24, "iron", false, false);
-            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "tower", "tier1", "tower", BedWars.getForCurrentVersion("CHEST", "CHEST", "CHEST"),
+                    "CHEST", 0, 1, false, 24, "iron", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "tower", "tier1", "tower", "CHEST",
                     0, 1, "", "", "", false);
 
         }

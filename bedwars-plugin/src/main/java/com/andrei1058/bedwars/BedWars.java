@@ -41,6 +41,7 @@ import com.andrei1058.bedwars.arena.tasks.Refresh;
 import com.andrei1058.bedwars.arena.upgrades.BaseListener;
 import com.andrei1058.bedwars.arena.upgrades.HealPoolListner;
 import com.andrei1058.bedwars.commands.bedwars.MainCommand;
+import com.andrei1058.bedwars.commands.debug.DebugCommand;
 import com.andrei1058.bedwars.commands.leave.LeaveCommand;
 import com.andrei1058.bedwars.commands.party.PartyCommand;
 import com.andrei1058.bedwars.commands.rejoin.RejoinCommand;
@@ -108,7 +109,7 @@ public class BedWars extends JavaPlugin {
 
     private static ServerType serverType = ServerType.MULTIARENA;
     public static boolean debug = true, autoscale = false;
-    public static String mainCmd = "bw", link = "https://www.spigotmc.org/resources/50942/";
+    public static String mainCmd = "bw", link = "https://github.com/bedtwLServer/BedWars1058";
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
@@ -187,18 +188,7 @@ public class BedWars extends JavaPlugin {
 
         // Setup languages
         new English();
-        new Romanian();
-        new Italian();
-        new Polish();
-        new Spanish();
-        new Russian();
-        new Bangla();
-        new Persian();
-        new Hindi();
-        new Indonesia();
-        new Portuguese();
         new SimplifiedChinese();
-        new Turkish();
 
         config = new MainConfig(this, "config");
 
@@ -225,6 +215,7 @@ public class BedWars extends JavaPlugin {
 
         /* Register commands */
         nms.registerCommand(mainCmd, new MainCommand(mainCmd));
+        nms.registerCommand("bwdebug", new DebugCommand("bwdebug"));
 
         // newer versions do not seem to like delayed registration of commands
         if (nms.getVersion() >= 9) {
@@ -519,6 +510,7 @@ public class BedWars extends JavaPlugin {
 
         // Warn user if current server version support is deprecated
         this.performDeprecationCheck();
+        this.getLogger().severe("Bedwars1058已啟用! 由ItsGlobally修改的版本!");
     }
 
     /**
@@ -656,14 +648,8 @@ public class BedWars extends JavaPlugin {
         }
     }
 
-    public static String getForCurrentVersion(String v18, String v12, String v13) {
-        switch (getServerVersion()) {
-            case "v1_8_R3":
-                return v18;
-            case "v1_12_R1":
-                return v12;
-        }
-        return v13;
+    public static String getForCurrentVersion(String v18) {
+        return v18;
     }
 
     public static ServerType getServerType() {

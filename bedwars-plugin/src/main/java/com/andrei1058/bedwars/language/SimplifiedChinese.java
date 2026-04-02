@@ -41,7 +41,7 @@ public class SimplifiedChinese extends Language {
         YamlConfiguration yml = getYml();
         yml.options().copyDefaults(true);
         yml.addDefault(Messages.PREFIX, "");
-        yml.addDefault("name", "简体中文");
+        yml.addDefault("name", "中文");
 
         // this must stay here
         // move message to new path
@@ -1101,6 +1101,8 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_MSG + "3", "&c&l报警陷阱被{color}&l{team}的&7&l{player}&c&l触发了！");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_TITLE + "3", "&c&l警报！！！");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + "3", "{color}{team}&f触发了陷阱！");
+        yml.addDefault(Messages.DEBUG_COMMAND_USAGE, "&c用法: /debug <副指令>");
+        yml.addDefault(Messages.DEBUG_COMMAND_FIXPOS_SUCCESS, "&a已成功對齊位置!");
         save();
         setPrefix(m(Messages.PREFIX));
         setPrefixStatic(m(Messages.PREFIX));
