@@ -38,6 +38,7 @@ public class DebugCommand extends BukkitCommand {
     public boolean execute(CommandSender s, String st, String[] args) {
         if (!(s instanceof Player)) return true;
         Player p = (Player) s;
+        if (!p.hasPermission("bedwars.debug")) return true;
         if (args.length < 1) {
             p.sendMessage(getMsg(p, Messages.DEBUG_COMMAND_USAGE));
         }
@@ -53,8 +54,9 @@ public class DebugCommand extends BukkitCommand {
                 float fixedYaw = Math.round(yaw / 90f) * 90f;
 
                 float pitch = loc.getPitch();
+                float fixedPitch = Math.round(pitch / 90f) * 90f;
 
-                Location fixed = new Location(loc.getWorld(), x, y, z, fixedYaw, pitch);
+                Location fixed = new Location(loc.getWorld(), x, y, z, fixedYaw, fixedPitch);
                 p.teleport(fixed);
 
                 p.sendMessage(getMsg(p, Messages.DEBUG_COMMAND_FIXPOS_SUCCESS));
