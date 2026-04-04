@@ -86,48 +86,71 @@ public class DamageDeathMove implements Listener {
         this.tntDamageOthers = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_OTHERS);
     }
 
-    @EventHandler
+    /**
+     * Unified damage event handler
+     * Handles all types of damage including player damage, entity damage, and fatal damage
+     */
+    @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
-            IArena a = Arena.getArenaByPlayer(p);
-            if (a != null) {
-                if (a.isSpectator(p)) {
-                    e.setCancelled(true);
-                    return;
-                }
-                if (a.isReSpawning(p)) {
-                    e.setCancelled(true);
-                    return;
-                }
-                if (a.getStatus() != GameState.playing) {
-                    e.setCancelled(true);
-                    return;
-                }
-
-                // todo why did I set this to 1? disabled for now
-                /*if (e.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) {
-                    e.setDamage(1);
-                    return;
-                }*/
-                //if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
-                if (BedWarsTeam.reSpawnInvulnerability.containsKey(p.getUniqueId())) {
-                    if (BedWarsTeam.reSpawnInvulnerability.get(p.getUniqueId()) > System.currentTimeMillis()) {
-                        e.setCancelled(true);
-                    } else BedWarsTeam.reSpawnInvulnerability.remove(p.getUniqueId());
-                }
-                //}
-
-            }
+        // Handle non-player entities
+        if (!(e.getEntity() instanceof Player)) {
+            handleNonPlayerDamage(e);
+            return;
         }
+        Bukkit.getLogger().info(String.valueOf(e.getDamage()));
+        Bukkit.getLogger().info(String.valueOf(e.getFinalDamage()));
+        Bukkit.getLogger().info(e.getCause().name());
+
+        Player victim = (Player) e.getEntity();
+        IArena a = Arena.getArenaByPlayer(victim);
+
+        // Handle lobby world damage
         if (BedWars.getServerType() == ServerType.MULTIARENA) {
             if (e.getEntity().getLocation().getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
                 e.setCancelled(true);
+                return;
             }
         }
-    }
 
-    // show player health on bow hit
+        // No arena - no changes
+        if (a == null) {
+            return;
+        }
+
+        // Handle spectators and non-playing states
+        if (a.isSpectator(victim) || a.isReSpawning(victim) || a.getStatus() != GameState.playing) {
+            e.setCancelled(true);
+            return;
+        }
+
+        // Handle respawn invulnerability
+        if (BedWarsTeam.reSpawnInvulnerability.containsKey(victim.getUniqueId())) {
+            if (BedWarsTeam.reSpawnInvulnerability.get(victim.getUniqueId()) > System.currentTimeMillis()) {
+                e.setCancelled(true);
+                return;
+            } else {
+                BedWarsTeam.reSpawnInvulnerability.remove(victim.getUniqueId());
+            }
+        }
+
+        // Handle entity-caused damage
+        if (e instanceof EntityDamageByEntityEvent) {
+            handleEntityDamage((EntityDamageByEntityEvent) e, victim, a);
+
+            // If event was cancelled, don't proceed
+            if (e.isCancelled()) {
+                return;
+            }
+        }
+        // Check for fatal damage ONLY if damage wasn't cancelled
+        if (victim.getHealth() <= e.getFinalDamage()) {
+            e.setCancelled(true);
+            handleDeath(victim, e);
+        }
+    }
+    /**
+     * Shows player health on bow hit
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBowHit(EntityDamageByEntityEvent e) {
         if (e.getEntity().getType() != EntityType.PLAYER) return;
@@ -135,7 +158,6 @@ public class DamageDeathMove implements Listener {
         Projectile projectile = (Projectile) e.getDamager();
         if (projectile.getShooter() == null) return;
         if (!(projectile.getShooter() instanceof Player)) return;
-
         Player p = (Player) e.getEntity();
         Player damager = (Player) projectile.getShooter();
         IArena a = Arena.getArenaByPlayer(p);
@@ -154,356 +176,202 @@ public class DamageDeathMove implements Listener {
         damager.sendMessage(message);
     }
 
-    @EventHandler
-    public void onDamageByEntity(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
-            IArena a = Arena.getArenaByPlayer(p);
-            if (a != null) {
-                if (a.getStatus() != GameState.playing) {
-                    e.setCancelled(true);
-                    return;
-                }
-                if (a.isSpectator(p) || a.isReSpawning(p)) {
-                    e.setCancelled(true);
-                    return;
-                }
+    /**
+     * Handles entity-caused damage
+     */
+    private void handleEntityDamage(EntityDamageByEntityEvent e, Player victim, IArena a) {
+        Bukkit.getLogger().info(e.getDamager().getType().name());
+        Entity damagerEntity = e.getDamager();
 
-                Player damager = null;
-                boolean projectile = false;
-                if (e.getDamager() instanceof Player) {
-                    damager = (Player) e.getDamager();
-                } else if (e.getDamager() instanceof Projectile) {
-                    ProjectileSource shooter = ((Projectile) e.getDamager()).getShooter();
-                    if (shooter instanceof Player) {
-                        damager = (Player) shooter;
-                    } else return;
-                    projectile = true;
-                } else if (e.getDamager() instanceof Player) {
-                    damager = (Player) e.getDamager();
-                    if (a.isReSpawning(damager)) {
-                        e.setCancelled(true);
-                        return;
-                    }
-                } else if (e.getDamager() instanceof TNTPrimed) {
-                    TNTPrimed tnt = (TNTPrimed) e.getDamager();
-                    if (tnt.getSource() != null) {
-                        if (tnt.getSource() instanceof Player) {
-                            damager = (Player) tnt.getSource();
-                            if (damager.equals(p)) {
-                                if (tntDamageSelf > -1) {
-                                    e.setDamage(tntDamageSelf);
-                                }
-                                // tnt jump. credits to feargames.it
-                                LivingEntity damaged = (LivingEntity) e.getEntity();
-                                Vector distance = damaged.getLocation().subtract(0, tntJumpBarycenterAlterationInY, 0).toVector().subtract(tnt.getLocation().toVector());
-                                Vector direction = distance.clone().normalize();
-                                double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + distance.length()));
-                                Vector resultingForce = direction.clone().multiply(force);
-                                resultingForce.setY(resultingForce.getY() / (distance.length() + tntJumpYAxisReductionConstant));
-                                damaged.setVelocity(resultingForce);
-                            } else {
-                                ITeam currentTeam = a.getTeam(p);
-                                ITeam damagerTeam = a.getTeam(damager);
-                                if (currentTeam.equals(damagerTeam)) {
-                                    if (tntDamageTeammates > -1) {
-                                        e.setDamage(tntDamageTeammates);
-                                    }
-                                } else {
-                                    if (tntDamageOthers > -1) {
-                                        e.setDamage(tntDamageOthers);
-                                    }
-                                }
-                            }
-                        } else return;
-                    }
-                } else if ((e.getDamager() instanceof Silverfish) || (e.getDamager() instanceof IronGolem)) {
-                    LastHit lh = LastHit.getLastHit(p);
-                    if (lh != null) {
-                        lh.setDamager(e.getDamager());
-                        lh.setTime(System.currentTimeMillis());
-                    } else {
-                        new LastHit(p, e.getDamager(), System.currentTimeMillis());
-                    }
-                }
-                if (damager != null) {
-                    if (a.isSpectator(damager) || a.isReSpawning(damager.getUniqueId())) {
-                        e.setCancelled(true);
-                        return;
-                    }
+        // Handle despawnable entities (Golems, Silverfish)
+        if (nms.isDespawnable(damagerEntity)) {
+            handleDespawnableDamage(e, a);
+            return;
+        }
 
-                    if (a.getTeam(p).equals(a.getTeam(damager))) {
-                        if (!(e.getDamager() instanceof TNTPrimed)) {
-                            e.setCancelled(true);
-                        }
-                        return;
-                    }
+        Player damager = getDamagerFromEvent(e);
 
-                    // protection after re-spawn
-                    if (BedWarsTeam.reSpawnInvulnerability.containsKey(p.getUniqueId())) {
-                        if (BedWarsTeam.reSpawnInvulnerability.get(p.getUniqueId()) > System.currentTimeMillis()) {
-                            e.setCancelled(true);
-                            return;
-                        } else BedWarsTeam.reSpawnInvulnerability.remove(p.getUniqueId());
-                    }
-                    // but if the damageR is the re-spawning player remove protection
-                    BedWarsTeam.reSpawnInvulnerability.remove(damager.getUniqueId());
+        // Handle TNT damage
+        if (damagerEntity instanceof TNTPrimed) {
+            handleTNTDamage((TNTPrimed) damagerEntity, victim, e, a, damager);
+            return;
+        }
 
-                    LastHit lh = LastHit.getLastHit(p);
-                    if (lh != null) {
-                        lh.setDamager(damager);
-                        lh.setTime(System.currentTimeMillis());
-                    } else {
-                        new LastHit(p, damager, System.currentTimeMillis());
-                    }
-
-                    // #274
-                    // if player gets hit show him
-                    if (a.getShowTime().containsKey(p)) {
-                        Bukkit.getScheduler().runTask(plugin, () -> {
-                            for (Player on : a.getWorld().getPlayers()) {
-                                BedWars.nms.showArmor(p, on);
-                                //BedWars.nms.showPlayer(p, on);
-                            }
-                            a.getShowTime().remove(p);
-                            p.removePotionEffect(PotionEffectType.INVISIBILITY);
-                            ITeam team = a.getTeam(p);
-                            p.sendMessage(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
-                            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
-                        });
-                    }
-                    //
-                }
-            }
-        } else if (nms.isDespawnable(e.getEntity())) {
-            Player damager;
-            if (e.getDamager() instanceof Player) {
-                damager = (Player) e.getDamager();
-            } else if (e.getDamager() instanceof Projectile) {
-                Projectile proj = (Projectile) e.getDamager();
-                damager = (Player) proj.getShooter();
-            } else if (e.getDamager() instanceof TNTPrimed) {
-                TNTPrimed tnt = (TNTPrimed) e.getDamager();
-                if (tnt.getSource() instanceof Player) {
-                    damager = (Player) tnt.getSource();
-                } else return;
-            } else return;
-            IArena a = Arena.getArenaByPlayer(damager);
-            if (a != null) {
-                if (a.isPlayer(damager)) {
-                    // do not hurt own mobs
-                    if (a.getTeam(damager) == nms.getDespawnablesList().get(e.getEntity().getUniqueId()).getTeam()) {
-                        e.setCancelled(true);
-                    }
-                } else {
-                    e.setCancelled(true);
-                }
-            }
-        } /*else if (e.getEntity() instanceof IronGolem) {
-            Player damager;
-            if (e.getDamager() instanceof Player) {
-                damager = (Player) e.getDamager();
-            } else if (e.getDamager() instanceof Projectile) {
-                Projectile proj = (Projectile) e.getDamager();
-                damager = (Player) proj.getShooter();
+        // Handle silverfish and iron golem damage
+        if ((damagerEntity instanceof Silverfish) || (damagerEntity instanceof IronGolem)) {
+            LastHit lh = LastHit.getLastHit(victim);
+            if (lh != null) {
+                lh.setDamager(damagerEntity);
+                lh.setTime(System.currentTimeMillis());
             } else {
-                return;
+                new LastHit(victim, damagerEntity, System.currentTimeMillis());
             }
-            Arena a = Arena.getArenaByPlayer(damager);
-            if (a != null) {
-                if (a.isPlayer(damager)) {
-                    if (nms.isDespawnable(e.getEntity())) {
-                        if (a.getTeam(damager) == ((OwnedByTeam) nms.getDespawnablesList().get(e.getEntity().getUniqueId())).getOwner()) {
-                            e.setCancelled(true);
-                        }
-                    }
+            return;
+        }
+
+        if (damager == null) {
+            return;
+        }
+
+        // Damager validation
+        if (a.isSpectator(damager) || a.isReSpawning(damager.getUniqueId())) {
+            e.setCancelled(true);
+            return;
+        }
+
+        // Team-mate damage
+        if (a.getTeam(victim).equals(a.getTeam(damager))) {
+            if (!(damagerEntity instanceof TNTPrimed)) {
+                e.setCancelled(true);
+            }
+            return;
+        }
+
+        // protection after re-spawn
+        if (BedWarsTeam.reSpawnInvulnerability.containsKey(victim.getUniqueId())) {
+            if (BedWarsTeam.reSpawnInvulnerability.get(victim.getUniqueId()) > System.currentTimeMillis()) {
+                e.setCancelled(true);
+                return;
+            } else {
+                BedWarsTeam.reSpawnInvulnerability.remove(victim.getUniqueId());
+            }
+        }
+
+        // but if the damageR is the re-spawning player remove protection
+        BedWarsTeam.reSpawnInvulnerability.remove(damager.getUniqueId());
+
+        // Track last hit for death attribution
+        LastHit lh = LastHit.getLastHit(victim);
+        if (lh != null) {
+            lh.setDamager(damager);
+            lh.setTime(System.currentTimeMillis());
+        } else {
+            new LastHit(victim, damager, System.currentTimeMillis());
+        }
+
+        // Handle invisibility removal on damage
+        handleInvisibilityRemoval(victim, a);
+    }
+
+    /**
+     * Handles TNT explosion damage
+     */
+    private void handleTNTDamage(TNTPrimed tnt, Player victim, EntityDamageByEntityEvent e, IArena a, Player damager) {
+        if (tnt.getSource() == null) {
+            return;
+        }
+
+        if (!(tnt.getSource() instanceof Player)) {
+            return;
+        }
+
+        Player tntSource = (Player) tnt.getSource();
+
+        if (tntSource.equals(victim)) {
+            // Self damage
+            if (tntDamageSelf > -1) {
+                e.setDamage(tntDamageSelf);
+            }
+            // tnt jump. credits to feargames.it
+            applyTNTJumpForce(victim, tnt);
+        } else {
+            // Team or enemy damage
+            ITeam currentTeam = a.getTeam(victim);
+            ITeam damagerTeam = a.getTeam(tntSource);
+
+            if (currentTeam.equals(damagerTeam)) {
+                if (tntDamageTeammates > -1) {
+                    e.setDamage(tntDamageTeammates);
+                }
+            } else {
+                if (tntDamageOthers > -1) {
+                    e.setDamage(tntDamageOthers);
                 }
             }
-        }*/
+        }
+    }
+
+    /**
+     * Applies TNT jump force to player
+     */
+    private void applyTNTJumpForce(Player victim, TNTPrimed tnt) {
+        LivingEntity damaged = victim;
+        Vector distance = damaged.getLocation()
+                .subtract(0, tntJumpBarycenterAlterationInY, 0)
+                .toVector()
+                .subtract(tnt.getLocation().toVector());
+        Vector direction = distance.clone().normalize();
+        double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + distance.length()));
+        Vector resultingForce = direction.clone().multiply(force);
+        resultingForce.setY(resultingForce.getY() / (distance.length() + tntJumpYAxisReductionConstant));
+        damaged.setVelocity(resultingForce);
+    }
+
+    /**
+     * Handles damage to despawnable entities (Golems, Silverfish)
+     */
+    private void handleDespawnableDamage(EntityDamageByEntityEvent e, IArena a) {
+        Player damager = getDamagerFromEvent(e);
+
+        if (damager == null || !a.isPlayer(damager)) {
+            e.setCancelled(true);
+            return;
+        }
+
+        // Do not hurt own mobs
+        if (a.getTeam(damager) == nms.getDespawnablesList().get(e.getEntity().getUniqueId()).getTeam()) {
+            e.setCancelled(true);
+        }
+    }
+
+    /**
+     * Extracts damager from various event sources
+     */
+    private Player getDamagerFromEvent(EntityDamageByEntityEvent e) {
+        if (e.getDamager() instanceof Player) {
+            return (Player) e.getDamager();
+        } else if (e.getDamager() instanceof Projectile) {
+            Projectile projectile = (Projectile) e.getDamager();
+            if (projectile.getShooter() instanceof Player) {
+                return (Player) projectile.getShooter();
+            }
+        } else if (e.getDamager() instanceof TNTPrimed) {
+            TNTPrimed tnt = (TNTPrimed) e.getDamager();
+            if (tnt.getSource() instanceof Player) {
+                return (Player) tnt.getSource();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Handles invisibility potion removal when player takes damage
+     */
+    private void handleInvisibilityRemoval(Player victim, IArena a) {
+        if (a.getShowTime().containsKey(victim)) {
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                for (Player on : a.getWorld().getPlayers()) {
+                    BedWars.nms.showArmor(victim, on);
+                }
+                a.getShowTime().remove(victim);
+                victim.removePotionEffect(PotionEffectType.INVISIBILITY);
+                ITeam team = a.getTeam(victim);
+                victim.sendMessage(getMsg(victim, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
+                Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, victim, a));
+            });
+        }
+    }
+
+    /**
+     * Handles non-player entity damage
+     */
+    private void handleNonPlayerDamage(EntityDamageEvent e) {
         if (BedWars.getServerType() == ServerType.MULTIARENA) {
             if (e.getEntity().getLocation().getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
                 e.setCancelled(true);
             }
         }
     }
-
-/*    @EventHandler
-    public void onDeath(@NotNull PlayerDeathEvent e) {
-        Player victim = e.getEntity(), killer = e.getEntity().getKiller();
-        ITeam killersTeam = null;
-        IArena a = Arena.getArenaByPlayer(victim);
-        if ((BedWars.getServerType() == ServerType.MULTIARENA && BedWars.getLobbyWorld().equals(e.getEntity().getWorld().getName())) || a != null) {
-            e.setDeathMessage(null);
-        }
-        if (a != null) {
-            if (a.isSpectator(victim)) {
-                victim.spigot().respawn();
-                return;
-            }
-            if (a.getStatus() != GameState.playing) {
-                victim.spigot().respawn();
-                return;
-            }
-            EntityDamageEvent damageEvent = e.getEntity().getLastDamageCause();
-
-            ITeam victimsTeam = a.getTeam(victim);
-            if (a.getStatus() != GameState.playing) {
-                victim.spigot().respawn();
-                return;
-            }
-            if (victimsTeam == null) {
-                victim.spigot().respawn();
-                return;
-            }
-
-            BedWars.nms.clearArrowsFromPlayerBody(victim);
-            String message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_UNKNOWN_REASON_FINAL_KILL : Messages.PLAYER_DIE_UNKNOWN_REASON_REGULAR;
-            PlayerKillEvent.PlayerKillCause cause = victimsTeam.isBedDestroyed() ? PlayerKillEvent.PlayerKillCause.UNKNOWN_FINAL_KILL : PlayerKillEvent.PlayerKillCause.UNKNOWN;
-            if (damageEvent != null) {
-                if (damageEvent.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
-                    LastHit lh = getLastHit(victim);
-                    if (lh != null) {
-                        if (lh.getTime() >= System.currentTimeMillis() - 15000) {
-                            if (lh.getDamager() instanceof Player) killer = (Player) lh.getDamager();
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
-                        }
-                    }
-                    if (killer == null) {
-                        message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_REGULAR;
-                    } else {
-                        if (killer != victim) {
-                            message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_EXPLOSION_WITH_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITH_SOURCE_REGULAR_KILL;
-                        } else {
-                            message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_REGULAR;
-                        }
-                    }
-                    cause = victimsTeam.isBedDestroyed() ? PlayerKillEvent.PlayerKillCause.EXPLOSION_FINAL_KILL : PlayerKillEvent.PlayerKillCause.EXPLOSION;
-
-                } else if (damageEvent.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                    LastHit lh = getLastHit(victim);
-                    if (lh != null) {
-                        if (lh.getTime() >= System.currentTimeMillis() - 15000) {
-                            if (lh.getDamager() instanceof Player) killer = (Player) lh.getDamager();
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
-                        }
-                    }
-                    if (killer == null) {
-                        message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL : Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL;
-                    } else {
-                        if (killer != victim) {
-                            message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_KNOCKED_IN_VOID_FINAL_KILL : Messages.PLAYER_DIE_KNOCKED_IN_VOID_REGULAR_KILL;
-                        } else {
-                            message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL : Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL;
-                        }
-                    }
-                    cause = victimsTeam.isBedDestroyed() ? PlayerKillEvent.PlayerKillCause.VOID_FINAL_KILL : PlayerKillEvent.PlayerKillCause.VOID;
-                } else if (damageEvent.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
-                    if (killer == null) {
-                        LastHit lh = getLastHit(victim);
-                        if (lh != null) {
-                            if (lh.getTime() >= System.currentTimeMillis() - 15000) {
-                                if (nms.isDespawnable(lh.getDamager())) {
-                                    Despawnable d = nms.getDespawnablesList().get(lh.getDamager().getUniqueId());
-                                    killersTeam = d.getTeam();
-                                    message = d.getEntity().getType() == EntityType.IRON_GOLEM ? victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_IRON_GOLEM_FINAL_KILL : Messages.PLAYER_DIE_IRON_GOLEM_REGULAR : victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_DEBUG_FINAL_KILL : Messages.PLAYER_DIE_DEBUG_REGULAR;
-                                    cause = victimsTeam.isBedDestroyed() ? d.getDeathFinalCause() : d.getDeathRegularCause();
-                                }
-                            }
-                        }
-                    } else {
-                        message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_PVP_FINAL_KILL : Messages.PLAYER_DIE_PVP_REGULAR_KILL;
-                        cause = victimsTeam.isBedDestroyed() ? PlayerKillEvent.PlayerKillCause.PVP_FINAL_KILL : PlayerKillEvent.PlayerKillCause.PVP;
-                    }
-                } else if (damageEvent.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
-                    if (killer != null) {
-                        message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_SHOOT_FINAL_KILL : Messages.PLAYER_DIE_SHOOT_REGULAR;
-                        cause = victimsTeam.isBedDestroyed() ? PlayerKillEvent.PlayerKillCause.PLAYER_SHOOT_FINAL_KILL : PlayerKillEvent.PlayerKillCause.PLAYER_SHOOT;
-                    }
-                } else if (damageEvent.getCause() == EntityDamageEvent.DamageCause.FALL) {
-                    LastHit lh = getLastHit(victim);
-                    if (lh != null) {
-                        // check if kicked off in the last 10 seconds
-                        if (lh.getTime() >= System.currentTimeMillis() - 10000) {
-                            if (lh.getDamager() instanceof Player) killer = (Player) lh.getDamager();
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
-                            if (killer != null) {
-                                if (killer != victim) {
-                                    message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_KNOCKED_BY_FINAL_KILL : Messages.PLAYER_DIE_KNOCKED_BY_REGULAR_KILL;
-                                } else {
-                                    message = victimsTeam.isBedDestroyed() ? Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL : Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL;
-                                }
-                            }
-                            cause = victimsTeam.isBedDestroyed() ? PlayerKillEvent.PlayerKillCause.PLAYER_PUSH_FINAL : PlayerKillEvent.PlayerKillCause.PLAYER_PUSH;
-                        }
-                    }
-                }
-            }
-
-            if (killer != null) killersTeam = a.getTeam(killer);
-            String finalMessage = message;
-
-            PlayerKillEvent playerKillEvent = new PlayerKillEvent(a, victim, victimsTeam, killer, killersTeam,
-                    player -> Language.getMsg(player, finalMessage), cause
-            );
-            Bukkit.getPluginManager().callEvent(playerKillEvent);
-
-            if (killer != null && playerKillEvent.playSound()) {
-                Sounds.playSound(ConfigPath.SOUNDS_KILL, killer);
-            }
-
-            if (null != playerKillEvent.getMessage()) {
-                for (Player on : a.getPlayers()) {
-                    Language lang = Language.getPlayerLanguage(on);
-                    on.sendMessage(playerKillEvent.getMessage().apply(on).
-                            replace("{PlayerColor}", victimsTeam.getColor().chat().toString())
-                            .replace("{PlayerName}", victim.getDisplayName())
-                            .replace("{PlayerNameUnformatted}", victim.getName())
-                            .replace("{PlayerTeamName}", victimsTeam.getDisplayName(lang))
-                            .replace("{KillerColor}", killersTeam == null ? "" : killersTeam.getColor().chat().toString())
-                            .replace("{KillerName}", killer == null ? "" : killer.getDisplayName())
-                            .replace("{KillerNameUnformatted}", killer == null ? "" : killer.getName())
-                            .replace("{KillerTeamName}", killersTeam == null ? "" : killersTeam.getDisplayName(lang)));
-                }
-            }
-
-            if (null != playerKillEvent.getMessage()) {
-                for (Player on : a.getSpectators()) {
-                    Language lang = Language.getPlayerLanguage(on);
-                    on.sendMessage(playerKillEvent.getMessage().apply(on).
-                            replace("{PlayerColor}", victimsTeam.getColor().chat().toString())
-                            .replace("{PlayerName}", victim.getDisplayName())
-                            .replace("{PlayerNameUnformatted}", victim.getName())
-                            .replace("{KillerColor}", killersTeam == null ? "" : killersTeam.getColor().chat().toString())
-                            .replace("{PlayerTeamName}", victimsTeam.getDisplayName(lang))
-                            .replace("{KillerName}", killer == null ? "" : killer.getDisplayName())
-                            .replace("{KillerNameUnformatted}", killer == null ? "" : killer.getName())
-                            .replace("{KillerTeamName}", killersTeam == null ? "" : killersTeam.getDisplayName(lang)));
-                }
-            }
-
-            // handle drops
-            if (PlayerDrops.handlePlayerDrops(a, victim, killer, victimsTeam, killersTeam, cause, e.getDrops())) {
-                e.getDrops().clear();
-            }
-
-            // send respawn packet
-            Bukkit.getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 3L);
-
-            // reset last damager
-            LastHit lastHit = LastHit.getLastHit(victim);
-            if (lastHit != null) {
-                lastHit.setDamager(null);
-            }
-
-
-            if (victimsTeam.isBedDestroyed() && victimsTeam.getSize() == 1 && a.getConfig().getBoolean(ConfigPath.ARENA_DISABLE_GENERATOR_FOR_EMPTY_TEAMS)) {
-                for (IGenerator g : victimsTeam.getGenerators()) {
-                    g.disable();
-                }
-                victimsTeam.getGenerators().clear();
-            }
-        }
-    }*/
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent e) {
@@ -736,54 +604,39 @@ public class DamageDeathMove implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onFatalDamage(EntityDamageEvent e) {
-        if (!(e.getEntity() instanceof Player)) return;
-
-        Player victim = (Player) e.getEntity();
-        IArena a = Arena.getArenaByPlayer(victim);
-
-        if (a == null) return;
-        if (a.getStatus() != GameState.playing) return;
-        if (a.isSpectator(victim) || a.isReSpawning(victim)) return;
-
-        double finalDamage = e.getFinalDamage();
-
-        if (victim.getHealth() - finalDamage <= 0) {
-            e.setCancelled(true);
-
-            handleDeath(victim, e);
-        }
-    }
-
+    /**
+     * Handles player death
+     */
     public void handleDeath(Player victim, EntityDamageEvent damageEvent) {
 
         IArena a = Arena.getArenaByPlayer(victim);
         if (a == null) return;
-
         if (a.isSpectator(victim)) return;
         if (a.getStatus() != GameState.playing) return;
 
         ITeam victimsTeam = a.getTeam(victim);
         if (victimsTeam == null) return;
 
+        if (a.isReSpawning(victim)) return;
+
         victim.setHealth(20);
-        victim.setNoDamageTicks(10);
         victim.setFireTicks(0);
         victim.setFallDistance(0);
-
+        victim.setVelocity(new Vector(0, 0, 0));
         BedWars.nms.clearArrowsFromPlayerBody(victim);
 
-        Player killer = null;
+        Player killer = victim.getKiller();
         ITeam killersTeam = null;
 
         LastHit lh = getLastHit(victim);
-        if (lh != null && lh.getTime() >= System.currentTimeMillis() - 15000) {
+        if (killer == null && lh != null && lh.getTime() >= System.currentTimeMillis() - 15000) {
             if (lh.getDamager() instanceof Player) {
                 killer = (Player) lh.getDamager();
-                if (killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
+                if (killer.equals(victim)) killer = null;
             }
         }
+
+        if (killer != null) killersTeam = a.getTeam(killer);
 
         String message = victimsTeam.isBedDestroyed()
                 ? Messages.PLAYER_DIE_UNKNOWN_REASON_FINAL_KILL
@@ -793,75 +646,31 @@ public class DamageDeathMove implements Listener {
                 ? PlayerKillEvent.PlayerKillCause.UNKNOWN_FINAL_KILL
                 : PlayerKillEvent.PlayerKillCause.UNKNOWN;
 
-        if (damageEvent != null) {
-
-            if (damageEvent.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                if (killer == null) {
-                    message = victimsTeam.isBedDestroyed()
-                            ? Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL
-                            : Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL;
-                } else {
-                    message = victimsTeam.isBedDestroyed()
-                            ? Messages.PLAYER_DIE_KNOCKED_IN_VOID_FINAL_KILL
-                            : Messages.PLAYER_DIE_KNOCKED_IN_VOID_REGULAR_KILL;
-                }
-                cause = victimsTeam.isBedDestroyed()
-                        ? PlayerKillEvent.PlayerKillCause.VOID_FINAL_KILL
-                        : PlayerKillEvent.PlayerKillCause.VOID;
-            }
-
-            if (damageEvent.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
-                if (killer != null) {
-                    message = victimsTeam.isBedDestroyed()
-                            ? Messages.PLAYER_DIE_PVP_FINAL_KILL
-                            : Messages.PLAYER_DIE_PVP_REGULAR_KILL;
-
-                    cause = victimsTeam.isBedDestroyed()
-                            ? PlayerKillEvent.PlayerKillCause.PVP_FINAL_KILL
-                            : PlayerKillEvent.PlayerKillCause.PVP;
-                }
-            }
-
-            if (damageEvent.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
-                if (killer != null) {
-                    message = victimsTeam.isBedDestroyed()
-                            ? Messages.PLAYER_DIE_SHOOT_FINAL_KILL
-                            : Messages.PLAYER_DIE_SHOOT_REGULAR;
-
-                    cause = victimsTeam.isBedDestroyed()
-                            ? PlayerKillEvent.PlayerKillCause.PLAYER_SHOOT_FINAL_KILL
-                            : PlayerKillEvent.PlayerKillCause.PLAYER_SHOOT;
-                }
-            }
-        }
-
-        if (killer != null) killersTeam = a.getTeam(killer);
-
-        String finalMessage = message;
-
-        PlayerKillEvent playerKillEvent = new PlayerKillEvent(
+        PlayerKillEvent event = new PlayerKillEvent(
                 a, victim, victimsTeam, killer, killersTeam,
-                player -> Language.getMsg(player, finalMessage), cause
+                player -> Language.getMsg(player, message),
+                cause
         );
 
-        Bukkit.getPluginManager().callEvent(playerKillEvent);
+        Bukkit.getPluginManager().callEvent(event);
 
-        if (killer != null && playerKillEvent.playSound()) {
+        if (killer != null && event.playSound()) {
             Sounds.playSound(ConfigPath.SOUNDS_KILL, killer);
         }
 
-        if (playerKillEvent.getMessage() != null) {
-            for (Player on : a.getPlayers()) {
-                Language lang = Language.getPlayerLanguage(on);
-                on.sendMessage(playerKillEvent.getMessage().apply(on).
-                        replace("{PlayerColor}", victimsTeam.getColor().chat().toString())
+        if (event.getMessage() != null) {
+            for (Player p : a.getPlayers()) {
+                Language lang = Language.getPlayerLanguage(p);
+                p.sendMessage(event.getMessage().apply(p)
+                        .replace("{PlayerColor}", victimsTeam.getColor().chat().toString())
                         .replace("{PlayerName}", victim.getDisplayName())
-                        .replace("{PlayerNameUnformatted}", victim.getName())
-                        .replace("{KillerColor}", killersTeam == null ? "" : killersTeam.getColor().chat().toString())
                         .replace("{PlayerTeamName}", victimsTeam.getDisplayName(lang))
-                        .replace("{KillerName}", killer == null ? "" : killer.getDisplayName())
-                        .replace("{KillerNameUnformatted}", killer == null ? "" : killer.getName())
-                        .replace("{KillerTeamName}", killersTeam == null ? "" : killersTeam.getDisplayName(lang)));
+                        .replace("{KillerName}", killer == null ? "" : killer.getDisplayName()));
+            }
+
+            for (Player p : a.getSpectators()) {
+                Language lang = Language.getPlayerLanguage(p);
+                p.sendMessage(event.getMessage().apply(p));
             }
         }
 
@@ -870,16 +679,79 @@ public class DamageDeathMove implements Listener {
             drops.clear();
         }
 
-        if (victimsTeam.isBedDestroyed()) {
+        if (a.isSpectator(victim)) {
+            victim.teleport(a.getSpectatorLocation());
+
+            String iso = Language.getPlayerLanguage(victim).getIso();
+
+            for (IGenerator o : a.getOreGenerators()) {
+                o.updateHolograms(victim, iso);
+            }
+
+            for (ITeam t : a.getTeams()) {
+                for (IGenerator o : t.getGenerators()) {
+                    o.updateHolograms(victim, iso);
+                }
+            }
+
+            for (ShopHolo sh : ShopHolo.getShopHolo()) {
+                if (sh.getA() == a) {
+                    sh.updateForPlayer(victim, iso);
+                }
+            }
+
+            a.sendSpectatorCommandItems(victim);
+            return;
+        }
+
+        ITeam t = a.getTeam(victim);
+
+        if (t == null) {
+            victim.teleport(a.getReSpawnLocation());
+
+            plugin.getLogger().severe(victim.getName() + " re-spawn error on "
+                    + a.getArenaName() + "[" + a.getWorldName() + "] because the team was NULL and he was not spectating!");
+            plugin.getLogger().severe("This is caused by one of your plugins: remove or configure any re-spawn related plugins.");
+
+            a.removePlayer(victim, false);
+            a.removeSpectator(victim, false);
+            return;
+        }
+
+        if (t.isBedDestroyed()) {
+
+            victim.teleport(a.getSpectatorLocation());
+
             a.addSpectator(victim, true, null);
-            victimsTeam.getMembers().remove(victim);
+            t.getMembers().remove(victim);
+
+            victim.sendMessage(getMsg(victim, Messages.PLAYER_DIE_ELIMINATED_CHAT));
+
+            if (t.getMembers().isEmpty()) {
+                Bukkit.getPluginManager().callEvent(new TeamEliminatedEvent(a, t));
+
+                for (Player on : a.getWorld().getPlayers()) {
+                    on.sendMessage(getMsg(on, Messages.TEAM_ELIMINATED_CHAT)
+                            .replace("{TeamColor}", t.getColor().chat().toString())
+                            .replace("{TeamName}", t.getDisplayName(Language.getPlayerLanguage(on))));
+                }
+
+                a.checkWinner();
+            }
+
         } else {
+
             int respawnTime = config.getInt(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_COUNTDOWN);
 
             if (respawnTime > 1) {
+
+                victim.teleport(a.getReSpawnLocation());
                 a.startReSpawnSession(victim, respawnTime);
+
             } else {
-                victimsTeam.respawnMember(victim);
+
+                victim.teleport(t.getSpawn());
+                t.respawnMember(victim);
             }
         }
 

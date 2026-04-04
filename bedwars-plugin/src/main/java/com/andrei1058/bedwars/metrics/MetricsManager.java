@@ -10,12 +10,12 @@ import java.util.concurrent.Callable;
 
 public class MetricsManager {
 
-    private static MetricsManager instance;
+    //private static MetricsManager instance;
 
-    private final Metrics metrics;
+    //private final Metrics metrics;
 
     private MetricsManager(BedWars plugin) {
-        metrics = new Metrics(plugin, 1885);
+        /*metrics = new Metrics(plugin, 1885);
 
         // base metrics
         metrics.addCustomChart(new SimplePie("server_type", () -> BedWars.getServerType().toString()));
@@ -26,24 +26,25 @@ public class MetricsManager {
         metrics.addCustomChart(new SimplePie("level_adapter", () -> BedWars.getLevelSupport().getClass().getName()));
         metrics.addCustomChart(new SimplePie("db_adapter", () -> BedWars.getRemoteDatabase().getClass().getName()));
         metrics.addCustomChart(new SimplePie("map_adapter", () -> BedWars.getAPI().getRestoreAdapter().getClass().getName()));
-        metrics.addCustomChart(new SimplePie("citizens_support", () -> String.valueOf(JoinNPC.isCitizensSupport())));
+        metrics.addCustomChart(new SimplePie("citizens_support", () -> String.valueOf(JoinNPC.isCitizensSupport())));*/
     }
 
     public Metrics getMetrics() {
-        return metrics;
+        //return metrics;
+        return null;
     }
 
     public static void appendPie(String id, Callable<String> callable) {
-        if (null == instance) {
+        /*if (null == instance) {
             throw new RuntimeException("Metrics manager is not initialized!");
         }
-        instance.getMetrics().addCustomChart(new SimplePie(id, callable));
+        instance.getMetrics().addCustomChart(new SimplePie(id, callable));*/
     }
 
     public static void initService(BedWars plugin) {
-        if (null != instance) {
+        /*if (null != instance) {
             return;
         }
-        instance = new MetricsManager(plugin);
+        instance = new MetricsManager(plugin);*/
     }
 }

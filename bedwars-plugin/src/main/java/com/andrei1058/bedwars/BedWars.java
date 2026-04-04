@@ -78,10 +78,6 @@ import com.andrei1058.bedwars.support.party.PAFBungeecordRedisApi;
 import com.andrei1058.bedwars.support.party.PartiesAdapter;
 import com.andrei1058.bedwars.support.preloadedparty.PrePartyListener;
 import com.andrei1058.bedwars.support.vault.*;
-import com.andrei1058.bedwars.support.vipfeatures.VipFeatures;
-import com.andrei1058.bedwars.support.vipfeatures.VipListeners;
-import com.andrei1058.vipfeatures.api.IVipFeatures;
-import com.andrei1058.vipfeatures.api.MiniGameAlreadyRegistered;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -472,7 +468,7 @@ public class BedWars extends JavaPlugin {
         // bStats metrics
         MetricsManager.initService(this);
 
-        if (Bukkit.getPluginManager().getPlugin("VipFeatures") != null) {
+        /*if (Bukkit.getPluginManager().getPlugin("VipFeatures") != null) {
             try {
                 IVipFeatures vf = Bukkit.getServicesManager().getRegistration(IVipFeatures.class).getProvider();
                 vf.registerMiniGame(new VipFeatures(this));
@@ -483,7 +479,7 @@ public class BedWars extends JavaPlugin {
             } catch (MiniGameAlreadyRegistered miniGameAlreadyRegistered) {
                 miniGameAlreadyRegistered.printStackTrace();
             }
-        }
+        }*/
 
         Bukkit.getScheduler().runTaskLater(this,
                 () -> out.info("This server is running in " + getServerType() + " with auto-scale " + autoscale),

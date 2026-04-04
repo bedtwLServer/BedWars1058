@@ -4,12 +4,14 @@ import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.LastHit;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -44,9 +46,9 @@ public class FireballListener implements Listener {
         this.damageTeammates = config.getYml().getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_TEAMMATES);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void fireballHit(ProjectileHitEvent e) {
-        if(!(e.getEntity() instanceof Fireball)) return;
+        if (!(e.getEntity() instanceof Fireball)) return;
         Location location = e.getEntity().getLocation();
 
         ProjectileSource projectileSource = e.getEntity().getShooter();
@@ -54,32 +56,34 @@ public class FireballListener implements Listener {
         Player source = (Player) projectileSource;
 
         IArena arena = Arena.getArenaByPlayer(source);
+        if (arena == null) return;
 
         Vector vector = location.toVector();
-
         World world = location.getWorld();
 
         assert world != null;
         Collection<Entity> nearbyEntities = world
                 .getNearbyEntities(location, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
-        for(Entity entity : nearbyEntities) {
-            if(!(entity instanceof Player)) continue;
+
+        for (Entity entity : nearbyEntities) {
+            if (!(entity instanceof Player)) continue;
             Player player = (Player) entity;
-            if(!getAPI().getArenaUtil().isPlaying(player)) continue;
+            if (!getAPI().getArenaUtil().isPlaying(player)) continue;
 
-
+            // Apply knockback
             Vector playerVector = player.getLocation().toVector();
             Vector normalizedVector = vector.subtract(playerVector).normalize();
             Vector horizontalVector = normalizedVector.multiply(fireballHorizontal);
             double y = normalizedVector.getY();
-            if(y < 0 ) y += 1.5;
-            if(y <= 0.5) {
-                y = fireballVertical*1.5; // kb for not jumping
+            if (y < 0 ) y += 1.5;
+            if (y <= 0.5) {
+                y = fireballVertical * 1.5; // kb for not jumping
             } else {
-                y = y*fireballVertical*1.5; // kb for jumping
+                y = y * fireballVertical * 1.5; // kb for jumping
             }
             player.setVelocity(horizontalVector.setY(y));
 
+            // Track last hit for death attribution
             LastHit lh = LastHit.getLastHit(player);
             if (lh != null) {
                 lh.setDamager(source);
@@ -87,28 +91,29 @@ public class FireballListener implements Listener {
             } else {
                 new LastHit(player, source, System.currentTimeMillis());
             }
-
-            if(player.equals(source)) {
-                if(damageSelf > 0) {
-                    player.damage(damageSelf); // damage shooter
-                }
-            } else if(arena.getTeam(player).equals(arena.getTeam(source))) {
-                if(damageTeammates > 0) {
-                    player.damage(damageTeammates); // damage teammates
-                }
+            // Determine damage based on relationship
+            double damage = 0;
+            if (player.equals(source)) {
+                damage = damageSelf;
+            } else if (arena.getTeam(player).equals(arena.getTeam(source))) {
+                damage = damageTeammates;
             } else {
-                if(damageEnemy > 0) {
-                    player.damage(damageEnemy); // damage enemies
-                }
+                damage = damageEnemy;
+            }
+            Bukkit.getLogger().info(String.valueOf(damage));
+
+            // Apply damage even if it's 0 or negative (for knockback-only fireballs)
+            // Only skip if damage is explicitly less than 0 (disabled)
+            if (damage >= 0) {
+                player.damage(damage, source);
             }
         }
     }
 
-
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void fireballDirectHit(EntityDamageByEntityEvent e) {
-        if(!(e.getDamager() instanceof Fireball)) return;
-        if(!(e.getEntity() instanceof Player)) return;
+        if (!(e.getDamager() instanceof Fireball)) return;
+        if (!(e.getEntity() instanceof Player)) return;
 
         if(Arena.getArenaByPlayer((Player) e.getEntity()) == null) return;
 
@@ -117,12 +122,12 @@ public class FireballListener implements Listener {
 
     @EventHandler
     public void fireballPrime(ExplosionPrimeEvent e) {
-        if(!(e.getEntity() instanceof Fireball)) return;
+        if (!(e.getEntity() instanceof Fireball)) return;
         ProjectileSource shooter = ((Fireball)e.getEntity()).getShooter();
-        if(!(shooter instanceof Player)) return;
+        if (!(shooter instanceof Player)) return;
         Player player = (Player) shooter;
 
-        if(Arena.getArenaByPlayer(player) == null) return;
+        if (Arena.getArenaByPlayer(player) == null) return;
 
         e.setFire(fireballMakeFire);
     }

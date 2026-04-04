@@ -68,7 +68,7 @@ public class Sounds {
         addDefSound(SOUNDS_BED_DESTROY, "ENDERDRAGON_GROWL");
         addDefSound(SOUNDS_BED_DESTROY_OWN, "WITHER_DEATH");
         addDefSound(SOUNDS_INSUFF_MONEY, "VILLAGER_NO");
-        addDefSound(SOUNDS_BOUGHT, "NOTE_PLING");
+        addDefSound(SOUNDS_BOUGHT, "NOTE_PIANO");
 
         addDefSound(NextEvent.BEDS_DESTROY.getSoundPath(), "none");
         addDefSound(NextEvent.DIAMOND_GENERATOR_TIER_II.getSoundPath(), "none");
@@ -139,7 +139,7 @@ public class Sounds {
         getSounds().getYml().addDefault(path + ".pitch", 1);
     }
 
-    public static  void playsoundArea(String path, Location location, float x, float y){
+    public static void playsoundArea(String path, Location location, float x, float y){
         final Sound sound = getSound(path);
         if (sound != null) location.getWorld().playSound(location, sound, x, y);
     }
